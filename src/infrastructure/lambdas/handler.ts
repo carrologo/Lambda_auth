@@ -1,32 +1,57 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
-import { SupabaseClientRepository } from "../database/SupabaseClientRepository";
-import { CreateClient } from "../../application/use-cases/CreateClient";
+import { SupabaseUserRepository } from "../database/SupabaseUserRepository";
+import { AuthenticateUser } from "../../application/use-cases/AuthenticateUser";
 
-const clientRepository = new SupabaseClientRepository();
-const createClient = new CreateClient(clientRepository);
+const userRepository = new SupabaseUserRepository();
+const authenticateUser = new AuthenticateUser(userRepository);
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {
     const body = JSON.parse(event.body || "{}");
-    const { name, email } = body;
+    const { username, password } = body;
 
-    if (!name || !email) {
+    if (!username || !password) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: "Name and email are required" }),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers":
+            "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+        },
+        body: JSON.stringify({ message: "Username and password are required" }),
       };
     }
 
-    const client = await createClient.execute(name, email);
+    const token = await authenticateUser.execute(username, password);
 
     return {
-      statusCode: 201,
-      body: JSON.stringify(client),
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers":
+          "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+      },
+      body: JSON.stringify({
+        message: "Authentication successful",
+        token: token,
+        expiresIn: "24h",
+      }),
     };
   } catch (error) {
     return {
-      statusCode: 500,
-      body: JSON.stringify({ message: error instanceof Error ? error.message : "An unknown error occurred" }),
+      statusCode: 401,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers":
+          "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+      },
+      body: JSON.stringify({
+        message:
+          error instanceof Error ? error.message : "Authentication failed",
+      }),
     };
   }
 };
