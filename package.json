@@ -1,7 +1,7 @@
 {
-  "name": "lambda_create_client",
+  "name": "lambda_auth",
   "version": "1.0.0",
-  "description": "",
+  "description": "Authentication service with hexagonal architecture",
   "main": "index.js",
   "scripts": {
     "build": "serverless package",
@@ -15,12 +15,15 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.x.x",
     "@types/node": "^22.14.1",
-    "date-fns": "^4.1.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
     "dotenv": "^16.x.x",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.149",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
     "esbuild": "^0.25.2",
     "serverless-esbuild": "^1.55.0",
     "serverless-offline": "^14.4.0"

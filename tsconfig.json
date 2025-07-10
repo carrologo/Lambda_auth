@@ -4,8 +4,13 @@
     "module": "CommonJS",
     "strict": true,
     "esModuleInterop": true,
-    "outDir": "src",
-    "rootDir": "./"
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
-  "include": ["./**/*", "infrastructure", "application", "domain", "index.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", ".serverless"]
 }

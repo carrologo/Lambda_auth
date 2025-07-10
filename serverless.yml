@@ -1,5 +1,5 @@
 service: auth-service-api
-frameworkVersion: '4'
+frameworkVersion: "4"
 
 provider:
   name: aws
@@ -8,16 +8,18 @@ provider:
   environment:
     SUPABASE_URL: ${env:SUPABASE_URL}
     SUPABASE_KEY: ${env:SUPABASE_KEY}
+    JWT_SECRET: ${env:JWT_SECRET}
 
 plugins:
   - serverless-offline
 
+
 functions:
-  Lambda_auth:
-    name: Lambda_auth-${opt:stage, 'dev'}
+  authenticate:
+    name: authenticate-${opt:stage, 'dev'}
     handler: src/infrastructure/lambdas/handler.handler
     events:
       - http:
-          path: /clients
+          path: /auth/login
           method: post
           cors: true
