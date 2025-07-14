@@ -5,6 +5,14 @@ import { AuthenticateUser } from "../../application/use-cases/AuthenticateUser";
 const userRepository = new SupabaseUserRepository();
 const authenticateUser = new AuthenticateUser(userRepository);
 
+// ✅ Definir headers consistentes
+const corsHeaders = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+  "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH,DELETE"
+};
+
 export const handler: APIGatewayProxyHandler = async (event) => {
   try {
     const body = JSON.parse(event.body || "{}");
@@ -13,12 +21,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     if (!username || !password) {
       return {
         statusCode: 400,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers":
-            "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-        },
+        headers: corsHeaders,
         body: JSON.stringify({ message: "Username and password are required" }),
       };
     }
@@ -27,12 +30,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers":
-          "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({
         message: "Authentication successful",
         token: token,
@@ -42,15 +40,9 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   } catch (error) {
     return {
       statusCode: 401,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers":
-          "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
-      },
+      headers: corsHeaders,
       body: JSON.stringify({
-        message:
-          error instanceof Error ? error.message : "Authentication failed",
+        message: error instanceof Error ? error.message : "Authentication failed",
       }),
     };
   }
